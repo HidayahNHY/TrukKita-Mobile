@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-} from 'react-native';
-import { router } from 'expo-router';
-import { useAppTheme } from './_layout';
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useAppTheme } from "./_layout";
 
 type Truck = {
   id: number;
@@ -20,41 +14,41 @@ type Truck = {
 const trucks: Truck[] = [
   {
     id: 1,
-    name: 'Pickup',
-    capacity: '± 1 Ton',
+    name: "Pickup",
+    capacity: "± 1 Ton",
     price: 200000,
-    icon: '🚚',
+    icon: "🚚",
   },
   {
     id: 2,
-    name: 'Colt Diesel',
-    capacity: '± 4 Ton',
+    name: "Colt Diesel",
+    capacity: "± 4 Ton",
     price: 350000,
-    icon: '🚛',
+    icon: "🚛",
   },
   {
     id: 3,
-    name: 'Fuso',
-    capacity: '± 8 Ton',
+    name: "Fuso",
+    capacity: "± 8 Ton",
     price: 600000,
-    icon: '🚛',
+    icon: "🚛",
   },
   {
     id: 4,
-    name: 'Tronton',
-    capacity: '± 15 Ton',
+    name: "Tronton",
+    capacity: "± 15 Ton",
     price: 900000,
-    icon: '🚚',
+    icon: "🚚",
   },
 ];
 
 export default function HomeScreen() {
   const { themeMode } = useAppTheme();
-  const isDark = themeMode === 'dark';
+  const isDark = themeMode === "dark";
 
   const [selectedTruck, setSelectedTruck] = useState<Truck | null>(null);
   const [statusPilihan, setStatusPilihan] = useState(
-    'Pilih truk yang sesuai dengan kebutuhan Anda.',
+    "Pilih truk yang sesuai dengan kebutuhan Anda.",
   );
 
   useEffect(() => {
@@ -66,23 +60,23 @@ export default function HomeScreen() {
   }, [selectedTruck]);
 
   const colors = {
-    background: isDark ? '#121212' : '#F5F7FA',
-    surface: isDark ? '#1E1E1E' : '#FFFFFF',
-    text: isDark ? '#FFFFFF' : '#222222',
-    secondaryText: isDark ? '#BBBBBB' : '#666666',
-    primary: '#C62828',
-    border: isDark ? '#383838' : '#E5E7EB',
-    soft: isDark ? '#2A2020' : '#FCE8E8',
+    background: isDark ? "#121212" : "#F5F7FA",
+    surface: isDark ? "#1E1E1E" : "#FFFFFF",
+    text: isDark ? "#FFFFFF" : "#222222",
+    secondaryText: isDark ? "#BBBBBB" : "#666666",
+    primary: "#C62828",
+    border: isDark ? "#383838" : "#E5E7EB",
+    soft: isDark ? "#2A2020" : "#FCE8E8",
   };
 
   const formatRupiah = (nominal: number) =>
-    `Rp${nominal.toLocaleString('id-ID')}`;
+    `Rp${nominal.toLocaleString("id-ID")}`;
 
   const bukaDetail = (truck: Truck) => {
     setSelectedTruck(truck);
 
     router.push({
-      pathname: '/detail',
+      pathname: "/detail",
       params: {
         name: truck.name,
         capacity: truck.capacity,
@@ -121,28 +115,11 @@ export default function HomeScreen() {
           Pilihan Armada
         </Text>
 
-        <Text style={[styles.sectionDescription, { color: colors.secondaryText }]}>
+        <Text
+          style={[styles.sectionDescription, { color: colors.secondaryText }]}
+        >
           Pilih jenis truk sesuai kapasitas muatan.
         </Text>
-
-        <Pressable
-          accessibilityRole="button"
-          style={styles.trackingButton}
-          onPress={() => router.push({
-            pathname: '/pemantauan',
-            params: {
-              name: selectedTruck?.name ?? 'Fuso',
-              capacity: selectedTruck?.capacity ?? '± 8 Ton',
-            },
-          })}
-        >
-          <Text style={styles.trackingButtonIcon}>🗺️</Text>
-          <View style={styles.trackingButtonContent}>
-            <Text style={styles.trackingButtonTitle}>Pantau Pengiriman</Text>
-            <Text style={styles.trackingButtonDescription}>Peta truk, jalur, dan lokasi konsumen</Text>
-          </View>
-          <Text style={styles.trackingButtonArrow}>›</Text>
-        </Pressable>
 
         <View
           style={[
@@ -201,15 +178,14 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            <View style={[styles.cardDivider, { backgroundColor: colors.border }]} />
+            <View
+              style={[styles.cardDivider, { backgroundColor: colors.border }]}
+            />
 
             <View style={styles.truckFooter}>
               <View>
                 <Text
-                  style={[
-                    styles.priceLabel,
-                    { color: colors.secondaryText },
-                  ]}
+                  style={[styles.priceLabel, { color: colors.secondaryText }]}
                 >
                   Harga per pesanan
                 </Text>
@@ -234,10 +210,10 @@ export default function HomeScreen() {
             styles.historyButton,
             { backgroundColor: colors.surface, borderColor: colors.border },
           ]}
-          onPress={() => router.push('/riwayat')}
+          onPress={() => router.push("/riwayat")}
         >
           <Text style={[styles.historyButtonText, { color: colors.text }]}>
-            📋  Lihat Riwayat Pesanan
+            📋 Lihat Riwayat Pesanan
           </Text>
         </Pressable>
       </View>
@@ -269,35 +245,35 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 24,
   },
   logo: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 23,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 24,
   },
   heroTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     lineHeight: 36,
     marginBottom: 12,
   },
   heroDescription: {
-    color: '#FDECEC',
+    color: "#FDECEC",
     fontSize: 14,
     lineHeight: 22,
     marginBottom: 22,
   },
   heroButton: {
-    backgroundColor: '#FFFFFF',
-    alignSelf: 'flex-start',
+    backgroundColor: "#FFFFFF",
+    alignSelf: "flex-start",
     paddingVertical: 13,
     paddingHorizontal: 20,
     borderRadius: 10,
   },
   heroButtonText: {
-    color: '#C62828',
+    color: "#C62828",
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   section: {
     paddingHorizontal: 18,
@@ -305,44 +281,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 6,
   },
   sectionDescription: {
     fontSize: 14,
     lineHeight: 21,
     marginBottom: 16,
-  },
-  trackingButton: {
-    backgroundColor: '#C62828',
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    borderRadius: 13,
-    marginBottom: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  trackingButtonIcon: {
-    fontSize: 26,
-    marginRight: 12,
-  },
-  trackingButtonContent: {
-    flex: 1,
-  },
-  trackingButtonTitle: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  trackingButtonDescription: {
-    color: '#FEE2E2',
-    fontSize: 11,
-    marginTop: 4,
-  },
-  trackingButtonArrow: {
-    color: '#FFFFFF',
-    fontSize: 28,
-    marginLeft: 8,
   },
   statusCard: {
     padding: 14,
@@ -352,7 +297,7 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   statusText: {
@@ -366,15 +311,15 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   truckHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   truckIconContainer: {
     width: 58,
     height: 58,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 13,
   },
   truckIcon: {
@@ -385,7 +330,7 @@ const styles = StyleSheet.create({
   },
   truckName: {
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   truckCapacity: {
@@ -396,9 +341,9 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   truckFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   priceLabel: {
     fontSize: 12,
@@ -406,43 +351,43 @@ const styles = StyleSheet.create({
   },
   truckPrice: {
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   chooseButton: {
-    backgroundColor: '#C62828',
+    backgroundColor: "#C62828",
     paddingVertical: 11,
     paddingHorizontal: 23,
     borderRadius: 9,
   },
   chooseButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   historyButton: {
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 5,
   },
   historyButtonText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   footer: {
     paddingHorizontal: 20,
     paddingTop: 28,
-    alignItems: 'center',
+    alignItems: "center",
   },
   footerTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 6,
   },
   footerText: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 19,
   },
 });
