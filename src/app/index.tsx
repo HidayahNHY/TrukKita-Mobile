@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -52,6 +52,11 @@ export default function HomeScreen() {
   const { themeMode } = useAppTheme();
   const isDark = themeMode === 'dark';
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const [sectionPosition, setSectionPosition] = useState(0);
+  const [statusOffset, setStatusOffset] = useState(0);
+
   const [selectedTruck, setSelectedTruck] = useState<Truck | null>(null);
   const [statusPilihan, setStatusPilihan] = useState(
     'Pilih truk yang sesuai dengan kebutuhan Anda.',
@@ -91,8 +96,17 @@ export default function HomeScreen() {
     });
   };
 
+  // Fungsi untuk menggulir ka status pilihan
+  const scrollKeStatus = () => {
+    scrollViewRef.current?.scrollTo({
+      y: sectionPosition + statusOffset,
+      animated: true,
+    });
+  };
+
   return (
     <ScrollView
+      ref={scrollViewRef}
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
     >
@@ -110,13 +124,18 @@ export default function HomeScreen() {
 
         <Pressable
           style={styles.heroButton}
-          onPress={() => bukaDetail(trucks[0])}
+          onPress={scrollKeStatus}
         >
           <Text style={styles.heroButtonText}>Pesan Sekarang</Text>
         </Pressable>
       </View>
 
-      <View style={styles.section}>
+      <View
+        style={styles.section}
+        onLayout={(event) =>
+          setSectionPosition(event.nativeEvent.layout.y)
+        }
+      >
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           Pilihan Armada
         </Text>
@@ -126,6 +145,9 @@ export default function HomeScreen() {
         </Text>
 
         <View
+          onLayout={(event) =>
+            setStatusOffset(event.nativeEvent.layout.y)
+          }
           style={[
             styles.statusCard,
             {
@@ -221,9 +243,33 @@ export default function HomeScreen() {
             📋  Lihat Riwayat Pesanan
           </Text>
         </Pressable>
+
+               {/* TOMBOL PEMANTAUAN RUTE TRUK */}
+        <Pressable
+          style={{
+            backgroundColor: '#C62828',
+            padding: 16,
+            borderRadius: 12,
+            alignItems: 'center',
+            marginVertical: 15,
+          }}
+          onPress={() => router.push('/rute')}
+        >
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontSize: 15,
+              fontWeight: 'bold',
+            }}
+          >
+            🚚 Pemantauan Rute Truk
+          </Text>
+        </Pressable>
+
       </View>
 
-      <View style={styles.footer}>
+      <View
+      style={styles.footer}>
         <Text style={[styles.footerTitle, { color: colors.text }]}>
           TrukKita
         </Text>

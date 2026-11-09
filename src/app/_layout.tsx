@@ -78,6 +78,14 @@ export default function RootLayout() {
               title: "Riwayat Pesanan",
             }}
           />
+
+          <Stack.Screen
+            name="rute"
+            options={{
+              title: "Pemantauan Rute Truk",
+            }}
+          />
+
         </Stack>
 
         <Modal
