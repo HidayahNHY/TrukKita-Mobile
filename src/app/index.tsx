@@ -125,6 +125,25 @@ export default function HomeScreen() {
           Pilih jenis truk sesuai kapasitas muatan.
         </Text>
 
+        <Pressable
+          accessibilityRole="button"
+          style={styles.trackingButton}
+          onPress={() => router.push({
+            pathname: '/pemantauan',
+            params: {
+              name: selectedTruck?.name ?? 'Fuso',
+              capacity: selectedTruck?.capacity ?? '± 8 Ton',
+            },
+          })}
+        >
+          <Text style={styles.trackingButtonIcon}>🗺️</Text>
+          <View style={styles.trackingButtonContent}>
+            <Text style={styles.trackingButtonTitle}>Pantau Pengiriman</Text>
+            <Text style={styles.trackingButtonDescription}>Peta truk, jalur, dan lokasi konsumen</Text>
+          </View>
+          <Text style={styles.trackingButtonArrow}>›</Text>
+        </Pressable>
+
         <View
           style={[
             styles.statusCard,
@@ -293,6 +312,37 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     marginBottom: 16,
+  },
+  trackingButton: {
+    backgroundColor: '#C62828',
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderRadius: 13,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  trackingButtonIcon: {
+    fontSize: 26,
+    marginRight: 12,
+  },
+  trackingButtonContent: {
+    flex: 1,
+  },
+  trackingButtonTitle: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  trackingButtonDescription: {
+    color: '#FEE2E2',
+    fontSize: 11,
+    marginTop: 4,
+  },
+  trackingButtonArrow: {
+    color: '#FFFFFF',
+    fontSize: 28,
+    marginLeft: 8,
   },
   statusCard: {
     padding: 14,

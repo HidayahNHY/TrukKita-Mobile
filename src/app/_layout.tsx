@@ -78,6 +78,13 @@ export default function RootLayout() {
               title: "Riwayat Pesanan",
             }}
           />
+
+          <Stack.Screen
+            name="pemantauan"
+            options={{
+              title: "Pemantauan Pengiriman",
+            }}
+          />
         </Stack>
 
         <Modal
