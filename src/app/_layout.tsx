@@ -1,6 +1,14 @@
+
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { createContext, useContext, useState } from "react";
-import { Modal, Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 
 type ThemeMode = "light" | "dark";
 
@@ -23,7 +31,9 @@ export default function RootLayout() {
   const isDark = themeMode === "dark";
 
   const toggleTheme = () => {
-    setThemeMode((current) => (current === "light" ? "dark" : "light"));
+    setThemeMode((current) =>
+      current === "light" ? "dark" : "light"
+    );
   };
 
   const colors = {
@@ -31,7 +41,6 @@ export default function RootLayout() {
     text: isDark ? "#FFFFFF" : "#222222",
     secondary: isDark ? "#BBBBBB" : "#666666",
     border: isDark ? "#383838" : "#E5E7EB",
-    primary: "#C62828",
   };
 
   return (
@@ -86,6 +95,12 @@ export default function RootLayout() {
             }}
           />
 
+          <Stack.Screen
+            name="pemantauan"
+            options={{
+              title: "Pemantauan Pengiriman",
+            }}
+          />
         </Stack>
 
         <Modal
@@ -114,7 +129,10 @@ export default function RootLayout() {
                   accessibilityLabel="Tutup pengaturan"
                 >
                   <Text
-                    style={[styles.closeButton, { color: colors.secondary }]}
+                    style={[
+                      styles.closeButton,
+                      { color: colors.secondary },
+                    ]}
                   >
                     ✕
                   </Text>
@@ -122,12 +140,17 @@ export default function RootLayout() {
               </View>
 
               <View
-                style={[styles.divider, { backgroundColor: colors.border }]}
+                style={[
+                  styles.divider,
+                  { backgroundColor: colors.border },
+                ]}
               />
 
               <View style={styles.themeRow}>
                 <View style={styles.themeInfo}>
-                  <Text style={styles.themeEmoji}>{isDark ? "🌙" : "☀️"}</Text>
+                  <Text style={styles.themeEmoji}>
+                    {isDark ? "🌙" : "☀️"}
+                  </Text>
 
                   <View style={styles.themeTextContainer}>
                     <Text style={[styles.themeTitle, { color: colors.text }]}>
