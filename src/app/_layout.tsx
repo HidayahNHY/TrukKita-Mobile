@@ -1,6 +1,17 @@
 
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
-import { createContext, useContext, useState } from "react";
+import {
+  DarkTheme,
+  DefaultTheme,
+  Stack,
+  ThemeProvider,
+} from "expo-router";
+
+import {
+  createContext,
+  useContext,
+  useState,
+} from "react";
+
 import {
   Modal,
   Pressable,
@@ -10,32 +21,39 @@ import {
   View,
 } from "react-native";
 
+// Tipe tema aplikasi
 type ThemeMode = "light" | "dark";
 
+// Tipe data untuk Theme Context
 type ThemeContextType = {
   themeMode: ThemeMode;
   toggleTheme: () => void;
 };
 
+// Membuat Theme Context
 const ThemeContext = createContext<ThemeContextType>({
   themeMode: "light",
   toggleTheme: () => {},
 });
 
+// Hook untuk menggunakan tema di halaman lain
 export const useAppTheme = () => useContext(ThemeContext);
 
+// Root Layout
 export default function RootLayout() {
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const [settingsVisible, setSettingsVisible] = useState(false);
 
   const isDark = themeMode === "dark";
 
+  // Fungsi mengganti tema
   const toggleTheme = () => {
     setThemeMode((current) =>
       current === "light" ? "dark" : "light"
     );
   };
 
+  // Warna berdasarkan tema
   const colors = {
     background: isDark ? "#121212" : "#FFFFFF",
     text: isDark ? "#FFFFFF" : "#222222",
@@ -44,8 +62,13 @@ export default function RootLayout() {
   };
 
   return (
-    <ThemeContext.Provider value={{ themeMode, toggleTheme }}>
-      <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+    <ThemeContext.Provider
+      value={{ themeMode, toggleTheme }}
+    >
+      <ThemeProvider
+        value={isDark ? DarkTheme : DefaultTheme}
+      >
+        {/* NAVIGASI APLIKASI */}
         <Stack
           screenOptions={{
             headerStyle: {
@@ -61,11 +84,14 @@ export default function RootLayout() {
                 style={styles.settingsButton}
                 accessibilityLabel="Buka pengaturan tema"
               >
-                <Text style={styles.settingsIcon}>⚙️</Text>
+                <Text style={styles.settingsIcon}>
+                  ⚙️
+                </Text>
               </Pressable>
             ),
           }}
         >
+          {/* BERANDA */}
           <Stack.Screen
             name="index"
             options={{
@@ -74,6 +100,7 @@ export default function RootLayout() {
             }}
           />
 
+          {/* DETAIL PEMESANAN */}
           <Stack.Screen
             name="detail"
             options={{
@@ -81,6 +108,7 @@ export default function RootLayout() {
             }}
           />
 
+          {/* RIWAYAT PESANAN */}
           <Stack.Screen
             name="riwayat"
             options={{
@@ -88,6 +116,7 @@ export default function RootLayout() {
             }}
           />
 
+          {/* PEMANTAUAN RUTE TRUK - MODUL 3 */}
           <Stack.Screen
             name="rute"
             options={{
@@ -95,6 +124,7 @@ export default function RootLayout() {
             }}
           />
 
+          {/* PEMANTAUAN PENGIRIMAN */}
           <Stack.Screen
             name="pemantauan"
             options={{
@@ -103,6 +133,7 @@ export default function RootLayout() {
           />
         </Stack>
 
+        {/* MODAL PENGATURAN */}
         <Modal
           visible={settingsVisible}
           transparent
@@ -119,8 +150,14 @@ export default function RootLayout() {
                 },
               ]}
             >
+              {/* HEADER PENGATURAN */}
               <View style={styles.settingsHeader}>
-                <Text style={[styles.settingsTitle, { color: colors.text }]}>
+                <Text
+                  style={[
+                    styles.settingsTitle,
+                    { color: colors.text },
+                  ]}
+                >
                   ⚙️ Pengaturan
                 </Text>
 
@@ -146,6 +183,7 @@ export default function RootLayout() {
                 ]}
               />
 
+              {/* PENGATURAN TEMA */}
               <View style={styles.themeRow}>
                 <View style={styles.themeInfo}>
                   <Text style={styles.themeEmoji}>
@@ -153,7 +191,12 @@ export default function RootLayout() {
                   </Text>
 
                   <View style={styles.themeTextContainer}>
-                    <Text style={[styles.themeTitle, { color: colors.text }]}>
+                    <Text
+                      style={[
+                        styles.themeTitle,
+                        { color: colors.text },
+                      ]}
+                    >
                       Mode {isDark ? "Gelap" : "Terang"}
                     </Text>
 
@@ -177,16 +220,21 @@ export default function RootLayout() {
                     false: "#D1D5DB",
                     true: "#E57373",
                   }}
-                  thumbColor={isDark ? "#C62828" : "#FFFFFF"}
+                  thumbColor={
+                    isDark ? "#C62828" : "#FFFFFF"
+                  }
                   accessibilityLabel="Ganti mode terang atau gelap"
                 />
               </View>
 
+              {/* TOMBOL SELESAI */}
               <Pressable
                 style={styles.doneButton}
                 onPress={() => setSettingsVisible(false)}
               >
-                <Text style={styles.doneButtonText}>Selesai</Text>
+                <Text style={styles.doneButtonText}>
+                  Selesai
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -196,6 +244,7 @@ export default function RootLayout() {
   );
 }
 
+// STYLE
 const styles = StyleSheet.create({
   settingsButton: {
     paddingHorizontal: 12,

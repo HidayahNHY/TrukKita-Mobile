@@ -1,6 +1,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
+
 import {
   ActivityIndicator,
   Linking,
@@ -31,20 +32,33 @@ export default function PemantauanWebScreen() {
   const params = useLocalSearchParams<{
     name?: string | string[];
     capacity?: string | string[];
+    truckName?: string | string[];
   }>();
 
   const { themeMode } = useAppTheme();
   const isDark = themeMode === "dark";
 
-  const truckName = getParam(params.name) || "Fuso";
-  const truckCapacity = getParam(params.capacity) || "± 8 Ton";
+  const truckName =
+    getParam(params.truckName) ||
+    getParam(params.name) ||
+    "Fuso";
 
-  const [route, setRoute] = useState<TrackingRoute>(FALLBACK_ROUTE);
+  const truckCapacity =
+    getParam(params.capacity) || "± 8 Ton";
+
+  const [route, setRoute] =
+    useState<TrackingRoute>(FALLBACK_ROUTE);
+
   const [loadingRoute, setLoadingRoute] = useState(true);
-  const [routeMessage, setRouteMessage] = useState<string | null>(null);
+
+  const [routeMessage, setRouteMessage] =
+    useState<string | null>(null);
+
   const [progressIndex, setProgressIndex] = useState(0);
+
   const [isSimulating, setIsSimulating] = useState(false);
 
+  // Warna tampilan berdasarkan tema
   const colors = useMemo(
     () => ({
       background: isDark ? "#121212" : "#F5F7FA",
@@ -56,20 +70,34 @@ export default function PemantauanWebScreen() {
       primary: "#C62828",
       green: isDark ? "#86EFAC" : "#15803D",
     }),
-    [isDark],
+    [isDark]
   );
 
-  const lastIndex = Math.max(0, route.coordinates.length - 1);
-  const safeIndex = Math.min(progressIndex, lastIndex);
+  // Menghitung progres perjalanan
+  const lastIndex = Math.max(
+    0,
+    route.coordinates.length - 1
+  );
+
+  const safeIndex = Math.min(
+    progressIndex,
+    lastIndex
+  );
 
   const progressPercent =
     lastIndex === 0
       ? 0
       : Math.round((safeIndex / lastIndex) * 100);
 
-  const isDelivered = lastIndex > 0 && safeIndex >= lastIndex;
-  const stepSize = Math.max(1, Math.floor(lastIndex / 10));
+  const isDelivered =
+    lastIndex > 0 && safeIndex >= lastIndex;
 
+  const stepSize = Math.max(
+    1,
+    Math.floor(lastIndex / 10)
+  );
+
+  // Menentukan status pengiriman
   const statusText = isDelivered
     ? "Barang tiba di lokasi konsumen"
     : progressPercent === 0
@@ -78,6 +106,7 @@ export default function PemantauanWebScreen() {
         ? "Truk mendekati lokasi konsumen"
         : "Truk dalam perjalanan";
 
+  // Memperbarui data rute
   const applyRoute = (result: TrackingRoute) => {
     setRoute(result);
     setProgressIndex(0);
@@ -86,11 +115,11 @@ export default function PemantauanWebScreen() {
     setRouteMessage(
       result.source === "OSRM"
         ? null
-        : "Rute simulasi sedang digunakan. Jarak dan waktu hanya untuk demonstrasi.",
+        : "Rute simulasi sedang digunakan. Jarak dan waktu hanya untuk demonstrasi."
     );
   };
 
-  // Mengambil data rute menggunakan async/await.
+  // Mengambil data API menggunakan async/await
   useEffect(() => {
     let isMounted = true;
 
@@ -100,14 +129,20 @@ export default function PemantauanWebScreen() {
 
         const result = await fetchTrackingRoute();
 
-        if (isMounted) applyRoute(result);
+        if (isMounted) {
+          applyRoute(result);
+        }
       } catch (error: unknown) {
         if (isMounted) {
           setRoute(FALLBACK_ROUTE);
-          setRouteMessage(readableTrackingError(error));
+          setRouteMessage(
+            readableTrackingError(error)
+          );
         }
       } finally {
-        if (isMounted) setLoadingRoute(false);
+        if (isMounted) {
+          setLoadingRoute(false);
+        }
       }
     };
 
@@ -118,13 +153,18 @@ export default function PemantauanWebScreen() {
     };
   }, []);
 
-  // Simulasi pergerakan truk.
+  // Simulasi pergerakan truk
   useEffect(() => {
-    if (!isSimulating || lastIndex < 1) return;
+    if (!isSimulating || lastIndex < 1) {
+      return;
+    }
 
     const interval = setInterval(() => {
       setProgressIndex((current) => {
-        const next = Math.min(lastIndex, current + stepSize);
+        const next = Math.min(
+          lastIndex,
+          current + stepSize
+        );
 
         if (next >= lastIndex) {
           setIsSimulating(false);
@@ -137,32 +177,54 @@ export default function PemantauanWebScreen() {
     return () => clearInterval(interval);
   }, [isSimulating, lastIndex, stepSize]);
 
+  // Memuat ulang API menggunakan Promise .then()
   const refreshRoute = () => {
     setLoadingRoute(true);
 
-    // Penerapan Promise .then() dan .catch().
     fetchTrackingRouteWithPromise()
-      .then((result) => applyRoute(result))
+      .then((result) => {
+        applyRoute(result);
+      })
       .catch((error: unknown) => {
         setRoute(FALLBACK_ROUTE);
         setProgressIndex(0);
         setIsSimulating(false);
-        setRouteMessage(readableTrackingError(error));
+
+        setRouteMessage(
+          readableTrackingError(error)
+        );
       })
-      .finally(() => setLoadingRoute(false));
+      .finally(() => {
+        setLoadingRoute(false);
+      });
   };
 
+  // Menjalankan atau menghentikan simulasi
   const toggleSimulation = () => {
     if (isSimulating) {
       setIsSimulating(false);
       return;
     }
 
-    if (isDelivered) setProgressIndex(0);
+    if (isDelivered) {
+      setProgressIndex(0);
+    }
 
     setIsSimulating(true);
   };
 
+  // Menggerakkan posisi truk secara manual
+  const nextPosition = () => {
+    setIsSimulating(false);
+
+    setProgressIndex((current) =>
+      current >= lastIndex
+        ? 0
+        : Math.min(lastIndex, current + stepSize)
+    );
+  };
+
+  // Membuka petunjuk arah Google Maps
   const openNavigation = () => {
     const url =
       "https://www.google.com/maps/dir/?api=1" +
@@ -175,33 +237,65 @@ export default function PemantauanWebScreen() {
 
   return (
     <ScrollView
-      style={{ backgroundColor: colors.background }}
+      style={{
+        backgroundColor: colors.background,
+      }}
       contentContainerStyle={styles.content}
     >
+      {/* HEADER */}
       <View style={styles.hero}>
-        <Text style={styles.eyebrow}>TRUKKITA • LIVE TRACKING DEMO</Text>
-        <Text style={styles.heroTitle}>Pemantauan Pengiriman</Text>
-        <Text style={styles.heroDescription}>
-          Pantau informasi pengiriman, progres perjalanan, dan lokasi tujuan
-          konsumen melalui browser.
+        <Text style={styles.eyebrow}>
+          TRUKKITA • LIVE TRACKING DEMO
         </Text>
-        <Text style={styles.badge}>SIMULASI — bukan GPS realtime</Text>
+
+        <Text style={styles.heroTitle}>
+          Pemantauan Pengiriman
+        </Text>
+
+        <Text style={styles.heroDescription}>
+          Pantau informasi pengiriman, progres perjalanan,
+          dan lokasi tujuan konsumen melalui browser.
+        </Text>
+
+        <Text style={styles.badge}>
+          SIMULASI — bukan GPS realtime
+        </Text>
       </View>
 
+      {/* INFORMASI PENGIRIMAN */}
       <View
         style={[
           styles.card,
-          { backgroundColor: colors.surface, borderColor: colors.border },
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
         ]}
       >
-        <Text style={{ color: colors.secondary, fontSize: 11 }}>
+        <Text
+          style={{
+            color: colors.secondary,
+            fontSize: 11,
+          }}
+        >
           NOMOR PENGIRIMAN
         </Text>
-        <Text style={[styles.orderId, { color: colors.text }]}>
+
+        <Text
+          style={[
+            styles.orderId,
+            { color: colors.text },
+          ]}
+        >
           TRK-DEMO-001
         </Text>
 
-        <Text style={[styles.truckTitle, { color: colors.text }]}>
+        <Text
+          style={[
+            styles.truckTitle,
+            { color: colors.text },
+          ]}
+        >
           {truckName}
         </Text>
 
@@ -209,7 +303,12 @@ export default function PemantauanWebScreen() {
           Kapasitas {truckCapacity}
         </Text>
 
-        <Text style={[styles.status, { color: colors.primary }]}>
+        <Text
+          style={[
+            styles.status,
+            { color: colors.primary },
+          ]}
+        >
           ● {statusText}
         </Text>
 
@@ -217,12 +316,23 @@ export default function PemantauanWebScreen() {
           <Text style={{ color: colors.secondary }}>
             Progres perjalanan
           </Text>
-          <Text style={{ color: colors.text, fontWeight: "bold" }}>
+
+          <Text
+            style={{
+              color: colors.text,
+              fontWeight: "bold",
+            }}
+          >
             {progressPercent}%
           </Text>
         </View>
 
-        <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
+        <View
+          style={[
+            styles.progressTrack,
+            { backgroundColor: colors.border },
+          ]}
+        >
           <View
             style={[
               styles.progressFill,
@@ -235,56 +345,108 @@ export default function PemantauanWebScreen() {
         </View>
       </View>
 
+      {/* INFORMASI RUTE */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { color: colors.text },
+          ]}
+        >
           Informasi Rute Pengiriman
         </Text>
-        <Text style={{ color: colors.secondary, marginTop: 5 }}>
+
+        <Text
+          style={{
+            color: colors.secondary,
+            marginTop: 5,
+          }}
+        >
           Gudang demo → lokasi konsumen
         </Text>
       </View>
 
+      {/* TITIK PERJALANAN */}
       <View
         style={[
           styles.card,
-          { backgroundColor: colors.surface, borderColor: colors.border },
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
         ]}
       >
-        <Text style={styles.locationIcon}>📍</Text>
-        <Text style={[styles.locationTitle, { color: colors.text }]}>
+        <Text style={styles.locationIcon}>
+          📍
+        </Text>
+
+        <Text
+          style={[
+            styles.locationTitle,
+            { color: colors.text },
+          ]}
+        >
           Titik Awal Gudang
         </Text>
+
         <Text style={{ color: colors.secondary }}>
-          {TRUCK_START.latitude}, {TRUCK_START.longitude}
+          {TRUCK_START.latitude},{" "}
+          {TRUCK_START.longitude}
         </Text>
 
         <View style={styles.routeLine} />
 
-        <Text style={styles.locationIcon}>🚚</Text>
-        <Text style={[styles.locationTitle, { color: colors.text }]}>
+        <Text style={styles.locationIcon}>
+          🚚
+        </Text>
+
+        <Text
+          style={[
+            styles.locationTitle,
+            { color: colors.text },
+          ]}
+        >
           Posisi Truk dalam Simulasi
         </Text>
+
         <Text style={{ color: colors.secondary }}>
-          Titik perjalanan {safeIndex + 1} dari {route.coordinates.length}
+          Titik perjalanan {safeIndex + 1} dari{" "}
+          {route.coordinates.length}
         </Text>
 
         <View style={styles.routeLine} />
 
-        <Text style={styles.locationIcon}>🏁</Text>
-        <Text style={[styles.locationTitle, { color: colors.text }]}>
+        <Text style={styles.locationIcon}>
+          🏁
+        </Text>
+
+        <Text
+          style={[
+            styles.locationTitle,
+            { color: colors.text },
+          ]}
+        >
           Lokasi Konsumen
         </Text>
+
         <Text style={{ color: colors.secondary }}>
           {CUSTOMER_DESTINATION.latitude},{" "}
           {CUSTOMER_DESTINATION.longitude}
         </Text>
 
-        <Text style={[styles.mapNotice, { color: colors.secondary }]}>
-          Peta interaktif tersedia pada aplikasi Android. Untuk melihat
-          petunjuk arah melalui browser, gunakan tombol Google Maps di bawah.
+        <Text
+          style={[
+            styles.mapNotice,
+            { color: colors.secondary },
+          ]}
+        >
+          Peta interaktif tersedia pada aplikasi Android.
+          Untuk melihat petunjuk arah melalui browser,
+          gunakan tombol Google Maps di bawah.
         </Text>
       </View>
 
+      {/* LOADING API */}
       {loadingRoute && (
         <ActivityIndicator
           style={{ marginTop: 15 }}
@@ -293,17 +455,35 @@ export default function PemantauanWebScreen() {
         />
       )}
 
+      {/* PESAN KETERANGAN RUTE */}
       {routeMessage && (
-        <View style={[styles.card, { backgroundColor: colors.soft }]}>
-          <Text style={{ color: colors.text, fontWeight: "bold" }}>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: colors.soft },
+          ]}
+        >
+          <Text
+            style={{
+              color: colors.text,
+              fontWeight: "bold",
+            }}
+          >
             Info Rute
           </Text>
-          <Text style={{ color: colors.secondary, marginTop: 5 }}>
+
+          <Text
+            style={{
+              color: colors.secondary,
+              marginTop: 5,
+            }}
+          >
             {routeMessage}
           </Text>
         </View>
       )}
 
+      {/* JARAK DAN ESTIMASI WAKTU */}
       <View
         style={[
           styles.card,
@@ -315,33 +495,73 @@ export default function PemantauanWebScreen() {
         ]}
       >
         <View style={styles.metric}>
-          <Text style={[styles.metricValue, { color: colors.text }]}>
+          <Text
+            style={[
+              styles.metricValue,
+              { color: colors.text },
+            ]}
+          >
             {route.distanceKm.toFixed(1)} km
           </Text>
-          <Text style={{ color: colors.secondary }}>Jarak rute</Text>
+
+          <Text style={{ color: colors.secondary }}>
+            Jarak rute
+          </Text>
         </View>
 
         <View style={styles.metric}>
-          <Text style={[styles.metricValue, { color: colors.text }]}>
-            {Math.max(1, Math.round(route.durationMinutes))} menit
+          <Text
+            style={[
+              styles.metricValue,
+              { color: colors.text },
+            ]}
+          >
+            {Math.max(
+              1,
+              Math.round(route.durationMinutes)
+            )}{" "}
+            menit
           </Text>
-          <Text style={{ color: colors.secondary }}>Estimasi waktu</Text>
+
+          <Text style={{ color: colors.secondary }}>
+            Estimasi waktu
+          </Text>
         </View>
 
         <View style={styles.metric}>
-          <Text style={[styles.metricValue, { color: colors.text }]}>
-            {route.source === "OSRM" ? "API OSRM" : "Simulasi"}
+          <Text
+            style={[
+              styles.metricValue,
+              { color: colors.text },
+            ]}
+          >
+            {route.source === "OSRM"
+              ? "API OSRM"
+              : "Simulasi"}
           </Text>
-          <Text style={{ color: colors.secondary }}>Sumber rute</Text>
+
+          <Text style={{ color: colors.secondary }}>
+            Sumber rute
+          </Text>
         </View>
       </View>
 
+      {/* KONTROL SIMULASI */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { color: colors.text },
+          ]}
+        >
           Kontrol Demo
         </Text>
 
-        <Pressable style={styles.primaryButton} onPress={toggleSimulation}>
+        <Pressable
+          style={styles.primaryButton}
+          onPress={toggleSimulation}
+          disabled={loadingRoute || lastIndex < 1}
+        >
           <Text style={styles.buttonText}>
             {isSimulating
               ? "Hentikan Simulasi"
@@ -351,13 +571,17 @@ export default function PemantauanWebScreen() {
           </Text>
         </Pressable>
 
-        <Pressable style={styles.secondaryButton} onPress={() => {
-          setIsSimulating(false);
-          setProgressIndex((current) =>
-            current >= lastIndex ? 0 : Math.min(lastIndex, current + stepSize),
-          );
-        }}>
-          <Text style={{ color: colors.text, fontWeight: "bold" }}>
+        <Pressable
+          style={styles.secondaryButton}
+          onPress={nextPosition}
+          disabled={loadingRoute || lastIndex < 1}
+        >
+          <Text
+            style={{
+              color: colors.text,
+              fontWeight: "bold",
+            }}
+          >
             Posisi Berikutnya
           </Text>
         </Pressable>
@@ -367,23 +591,40 @@ export default function PemantauanWebScreen() {
           onPress={refreshRoute}
           disabled={loadingRoute}
         >
-          <Text style={{ color: colors.text, fontWeight: "bold" }}>
+          <Text
+            style={{
+              color: colors.text,
+              fontWeight: "bold",
+            }}
+          >
             {loadingRoute ? "Memuat..." : "Muat Ulang API"}
           </Text>
         </Pressable>
 
-        <Pressable style={styles.primaryButton} onPress={openNavigation}>
+        <Pressable
+          style={styles.primaryButton}
+          onPress={openNavigation}
+        >
           <Text style={styles.buttonText}>
             Buka Petunjuk Arah Google Maps
           </Text>
         </Pressable>
       </View>
 
+      {/* KEMBALI KE BERANDA */}
       <Pressable
-        style={[styles.secondaryButton, { borderColor: colors.border }]}
+        style={[
+          styles.secondaryButton,
+          { borderColor: colors.border },
+        ]}
         onPress={() => router.replace("/")}
       >
-        <Text style={{ color: colors.text, fontWeight: "bold" }}>
+        <Text
+          style={{
+            color: colors.text,
+            fontWeight: "bold",
+          }}
+        >
           ← Kembali ke Beranda
         </Text>
       </Pressable>
@@ -391,27 +632,39 @@ export default function PemantauanWebScreen() {
   );
 }
 
+// STYLE
 const styles = StyleSheet.create({
-  content: { paddingBottom: 35 },
+  content: {
+    paddingBottom: 35,
+  },
+
   hero: {
     backgroundColor: "#1E293B",
     padding: 24,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
+
   eyebrow: {
     color: "#FCA5A5",
     fontSize: 11,
     fontWeight: "bold",
     marginBottom: 10,
   },
-  heroTitle: { color: "#FFFFFF", fontSize: 25, fontWeight: "900" },
+
+  heroTitle: {
+    color: "#FFFFFF",
+    fontSize: 25,
+    fontWeight: "900",
+  },
+
   heroDescription: {
     color: "#CBD5E1",
     fontSize: 13,
     lineHeight: 20,
     marginTop: 8,
   },
+
   badge: {
     color: "#FEE2E2",
     backgroundColor: "#7F1D1D",
@@ -421,6 +674,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 11,
   },
+
   card: {
     marginHorizontal: 16,
     marginTop: 16,
@@ -428,21 +682,63 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
   },
-  orderId: { fontSize: 17, fontWeight: "900", marginTop: 5 },
-  truckTitle: { fontSize: 20, fontWeight: "bold", marginTop: 15 },
-  status: { marginTop: 15, fontWeight: "bold" },
+
+  orderId: {
+    fontSize: 17,
+    fontWeight: "900",
+    marginTop: 5,
+  },
+
+  truckTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 15,
+  },
+
+  status: {
+    marginTop: 15,
+    fontWeight: "bold",
+  },
+
   progressHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
     marginBottom: 8,
   },
-  progressTrack: { height: 9, borderRadius: 10, overflow: "hidden" },
-  progressFill: { height: "100%", borderRadius: 10 },
-  section: { marginHorizontal: 18, marginTop: 25 },
-  sectionTitle: { fontSize: 19, fontWeight: "900" },
-  locationIcon: { fontSize: 25, marginTop: 8 },
-  locationTitle: { fontSize: 15, fontWeight: "bold", marginTop: 6 },
+
+  progressTrack: {
+    height: 9,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+
+  progressFill: {
+    height: "100%",
+    borderRadius: 10,
+  },
+
+  section: {
+    marginHorizontal: 18,
+    marginTop: 25,
+  },
+
+  sectionTitle: {
+    fontSize: 19,
+    fontWeight: "900",
+  },
+
+  locationIcon: {
+    fontSize: 25,
+    marginTop: 8,
+  },
+
+  locationTitle: {
+    fontSize: 15,
+    fontWeight: "bold",
+    marginTop: 6,
+  },
+
   routeLine: {
     width: 2,
     height: 25,
@@ -450,13 +746,24 @@ const styles = StyleSheet.create({
     marginLeft: 11,
     marginTop: 5,
   },
+
   mapNotice: {
     marginTop: 20,
     fontSize: 12,
     lineHeight: 19,
   },
-  metric: { flex: 1, alignItems: "center", paddingHorizontal: 3 },
-  metricValue: { fontSize: 14, fontWeight: "900" },
+
+  metric: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 3,
+  },
+
+  metricValue: {
+    fontSize: 14,
+    fontWeight: "900",
+  },
+
   primaryButton: {
     backgroundColor: "#C62828",
     padding: 15,
@@ -464,7 +771,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 12,
   },
-  buttonText: { color: "#FFFFFF", fontWeight: "bold" },
+
+  buttonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+  },
+
   secondaryButton: {
     padding: 14,
     borderWidth: 1,
