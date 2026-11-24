@@ -32,16 +32,9 @@ npm install
 ```
 
 ### 2. Konfigurasi Lingkungan (.env)
-Salin berkas template lingkungan:
-```bash
-cp .env.example .env
-```
-Isi konfigurasi proyek Supabase Anda pada `.env`:
-```env
-EXPO_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxxxx.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-*(Catatan: Jika Supabase belum dikonfigurasi, aplikasi tetap dapat dijalankan dalam mode demo lokal tanpa error).*
+
+EXPO_PUBLIC_SUPABASE_URL= url key
+EXPO_PUBLIC_SUPABASE_ANON_KEY= anon key
 
 ### 3. Deploy Skema Database & RLS
 Buka **SQL Editor** pada Dashboard Supabase Anda, salin skrip yang ada pada berkas `supabase/schema.sql`, lalu klik **Run**.
