@@ -113,7 +113,7 @@ export default function AuthScreen() {
             <TextInput
               accessibilityLabel="Nama lengkap"
               autoCapitalize="words"
-              editable={isConfigured && !isSubmitting}
+              editable={!isSubmitting}
               onChangeText={setFullName}
               placeholder="Nama lengkap"
               placeholderTextColor="#94A3B8"
@@ -125,7 +125,7 @@ export default function AuthScreen() {
             accessibilityLabel="Email"
             autoCapitalize="none"
             autoComplete="email"
-            editable={isConfigured && !isSubmitting}
+            editable={!isSubmitting}
             keyboardType="email-address"
             onChangeText={setEmail}
             placeholder="Email"
@@ -137,7 +137,7 @@ export default function AuthScreen() {
             accessibilityLabel="Kata sandi"
             autoCapitalize="none"
             autoComplete={isSignUp ? "new-password" : "current-password"}
-            editable={isConfigured && !isSubmitting}
+            editable={!isSubmitting}
             onChangeText={setPassword}
             placeholder="Kata sandi"
             placeholderTextColor="#94A3B8"
