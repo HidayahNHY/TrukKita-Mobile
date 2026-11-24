@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -60,17 +60,9 @@ export default function HomeScreen() {
 
   const [selectedTruck, setSelectedTruck] = useState<Truck | null>(null);
 
-  const [statusPilihan, setStatusPilihan] = useState(
-    "Pilih truk yang sesuai dengan kebutuhan Anda."
-  );
-
-  useEffect(() => {
-    if (selectedTruck) {
-      setStatusPilihan(
-        `${selectedTruck.name} dipilih. Silakan lanjutkan ke detail pesanan.`
-      );
-    }
-  }, [selectedTruck]);
+  const statusPilihan = selectedTruck
+    ? `${selectedTruck.name} dipilih. Silakan lanjutkan ke detail pesanan.`
+    : "Pilih truk yang sesuai dengan kebutuhan Anda.";
 
   const colors = {
     background: isDark ? "#121212" : "#F5F7FA",
