@@ -3,7 +3,6 @@
     "name": "TrukKita-Mobile",
     "slug": "TrukKita-Mobile",
     "version": "1.0.0",
-    
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "trukkitamobile",
@@ -33,7 +32,8 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
