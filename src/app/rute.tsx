@@ -20,12 +20,6 @@ import { getRoute } from "../services/routeService";
 
 import type { OSRMRoute } from "../types/route";
 
-import {
-  contohResolve,
-  contohReject,
-  ujiPromiseThen,
-} from "../utils/asyncUtils";
-
 // Koordinat Alun-Alun Kota Malang
 const TITIK_AWAL = {
   longitude: 112.6308013,
@@ -56,8 +50,6 @@ export default function RuteScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [promiseMessage, setPromiseMessage] = useState("");
-
   // Mengambil data rute dari API menggunakan async/await
   const hitungRute = async () => {
     try {
@@ -77,28 +69,6 @@ export default function RuteScreen() {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Menguji Promise.resolve() dan .then()
-  const tesResolve = () => {
-    contohResolve()
-      .then((hasil) => {
-        setPromiseMessage(hasil);
-      })
-      .catch((err: Error) => {
-        setPromiseMessage(err.message);
-      });
-  };
-
-  // Menguji Promise.reject() dan .catch()
-  const tesReject = () => {
-    contohReject()
-      .then((hasil) => {
-        setPromiseMessage(hasil);
-      })
-      .catch((err: Error) => {
-        setPromiseMessage(err.message);
-      });
   };
 
   // Mengubah durasi detik menjadi jam dan menit

@@ -7,7 +7,7 @@ import type { OSRMResponse, OSRMRoute } from "../types/route";
 // Fungsi asynchronous untuk mengambil data rute
 export const getRoute = async (
   origin: { longitude: number; latitude: number },
-  destination: { longitude: number; latitude: number }
+  destination: { longitude: number; latitude: number },
 ): Promise<OSRMRoute> => {
   try {
     // Membuat URL API OSRM
@@ -31,7 +31,6 @@ export const getRoute = async (
 
     // Mengembalikan data rute pertama
     return data.routes[0];
-
   } catch (error) {
     console.error("Kesalahan mengambil data rute:", error);
     throw error;

@@ -7,13 +7,13 @@ export interface MapCoordinate {
 /** Bentuk ringkas response OSRM Route API yang digunakan aplikasi. */
 export interface OsrmRouteResponse {
   code: string;
-  routes?: Array<{
+  routes?: {
     distance: number;
     duration: number;
     geometry?: {
       coordinates: number[][];
     };
-  }>;
+  }[];
 }
 
 /** Data rute yang sudah dipetakan agar mudah digunakan komponen UI. */

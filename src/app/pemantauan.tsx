@@ -127,15 +127,17 @@ export default function PemantauanScreen() {
     if (!isSimulating || lastIndex < 1) return;
 
     const interval = setInterval(() => {
-      setProgressIndex((current) => Math.min(lastIndex, current + stepSize));
+      setProgressIndex((current) => {
+        const next = Math.min(lastIndex, current + stepSize);
+        if (next >= lastIndex) {
+          setIsSimulating(false);
+        }
+        return next;
+      });
     }, 1200);
 
     return () => clearInterval(interval);
   }, [isSimulating, lastIndex, stepSize]);
-
-  useEffect(() => {
-    if (isDelivered) setIsSimulating(false);
-  }, [isDelivered]);
 
   /** Penerapan .then() dan .catch() untuk memuat ulang rute. */
   const refreshRoute = () => {
