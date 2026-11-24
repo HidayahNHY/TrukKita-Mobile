@@ -1,54 +1,26 @@
 # TrukKita-Mobile 🚚
 
-Aplikasi mobile berbasis **React Native & Expo Router** untuk layanan pemesanan dan pemantauan armada truk logistik. Proyek ini mengimplementasikan seluruh standar pembelajaran **Modul 4: Database & Autentikasi** (Praktikum Pemrograman Mobile).
+Aplikasi mobile berbasis **React Native & Expo Router** untuk layanan pemesanan dan pemantauan armada truk logistik terintegrasi dengan basis data cloud dan autentikasi aman.
 
 ---
 
-## 👥 Tim Pengembang & Distribusi Kontribusi
+## 👥 Tim Pengembang
 
-| Nama Anggota | GitHub Username | Email | Bagian Tugas Modul 4 |
-| :--- | :--- | :--- | :--- |
-| **Muhammad Yoga Adra Assajad** | [`clownr007`](https://github.com/clownr007) | `muhammadyogaadraassajad@gmail.com` | Global `AuthContext`, Antarmuka Autentikasi (`auth.tsx`), CRUD Riwayat Cloud & Optimistic UI (`riwayat.tsx`), Dokumentasi |
-| **Hidayah Nurul Yakin** | [`HidayahNHY`](https://github.com/HidayahNHY) | `hidayahyamlean902@gmail.com` | Client Singleton Supabase (`supabase.ts`), Secure Storage Adapter (`authStorage.ts`), Skema Database & Kebijakan RLS (`schema.sql`), Route Protection Guard (`_layout.tsx`), Integrasi Pemesanan Cloud (`detail.tsx`) |
+| Nama Anggota | GitHub Username | Email |
+| :--- | :--- | :--- |
+| **Muhammad Yoga Adra Assajad** | [`clownr007`](https://github.com/clownr007) | `muhammadyogaadraassajad@gmail.com` |
+| **Hidayah Nurul Yakin** | [`HidayahNHY`](https://github.com/HidayahNHY) | `hidayahyamlean902@gmail.com` |
 
 ---
 
-## 🎯 Kriteria Penilaian Modul 4
+## ✨ Fitur Utama
 
-Aplikasi ini telah memenuhi seluruh kriteria penilaian tugas demo Modul 4:
-
-1. **Secure Token Storage (5%)**
-   - Menggunakan `expo-secure-store` pada Android/iOS untuk enkripsi token JWT di tingkat perangkat keras (*Keychain* di iOS dan *Keystore* di Android).
-   - Dilengkapi fallback `localStorage` untuk lingkungan web.
-   - Tersedia komponen demo interaktif Codelab 1 di menu Pengaturan (*Secure Vault Demo*).
-
-2. **Supabase Auth Flow (10%)**
-   - Alur autentikasi ganda: **Daftar Akun Baru (Sign Up)** dan **Masuk Akun (Sign In)**.
-   - Pembersihan input formulir dengan `.trim()` untuk mencegah spasi tak terlihat.
-   - Optimasi keyboard seluler: `keyboardType="email-address"`, `autoCapitalize="none"`, `autoCorrect={false}`.
-   - Penanganan status pemuatan (`ActivityIndicator`) dan penonaktifan tombol submit untuk mencegah *multiple submission*.
-   - Notifikasi kesalahan (*error handling*) ramah pengguna tanpa *crash*.
-
-3. **Global AuthContext & Real-Time Session (5%)**
-   - Dikelola secara terpusat melalui `src/contexts/AuthContext.tsx`.
-   - Rehidrasi sesi otomatis saat *startup* menggunakan `supabase.auth.getSession()`.
-   - Berlangganan status perubahan sesi *real-time* via `supabase.auth.onAuthStateChange()`.
-
-4. **Route Protection Guards (5%)**
-   - Perimeter keamanan rute pada `src/app/_layout.tsx` menggunakan `Stack.Protected`.
-   - Tamu belum terautentikasi otomatis dicegah dan dialihkan ke `/auth`.
-   - Pengguna aktif yang berhasil login otomatis dialihkan ke layar utama aplikasi.
-   - *Loading Shield* mencegah *layout flicker* saat memulihkan sesi.
-   - Fitur *Keluar dari Akun* (Sign Out) yang otomatis mengunci kembali aplikasi.
-
-5. **Cloud Database CRUD & Row Level Security / RLS (Assignment & Codelab 5)**
-   - Tabel `public.orders` terhubung ke PostgreSQL Cloud (Supabase).
-   - **CREATE (INSERT)**: Membuat pesanan truk langsung dari halaman Detail (`detail.tsx`).
-   - **READ (SELECT)**: Menampilkan riwayat pesanan aktif dan lampau (`riwayat.tsx`).
-   - **UPDATE**: Membatalkan pesanan dengan pembaruan instan (*Optimistic UI*).
-   - **DELETE**: Menghapus riwayat pesanan dengan *Optimistic UI* dan *rollback handling*.
-   - **Pull-to-Refresh**: Sinkronisasi data terkini dari server awan secara mulus.
-   - **Row Level Security (RLS)**: Data pesanan diisolasi ketat menggunakan kebijakan `auth.uid() = user_id`. Pengguna A tidak dapat melihat, mengubah, atau menghapus pesanan milik Pengguna B.
+- **Penyimpanan Kredensial Aman**: Enkripsi token sesi menggunakan `expo-secure-store` pada penyimpanan perangkat keras (*Keychain* di iOS dan *Keystore* di Android) dengan fallback web.
+- **Autentikasi Pengguna**: Alur masuk (Sign In), pendaftaran (Sign Up), dan keluar akun (Sign Out) terintegrasi dengan Supabase Auth.
+- **Status Sesi Global**: Pengelolaan sesi terpusat dengan pemulihan otomatis saat aplikasi dibuka dan sinkronisasi status secara *real-time*.
+- **Proteksi Rute Navigasi**: Perlindungan rute menggunakan Expo Router sehingga area pemesanan dan riwayat hanya dapat diakses oleh pengguna terautentikasi.
+- **Basis Data Cloud & Isolasi Data**: Pemesanan armada tersimpan di PostgreSQL Supabase dengan Row Level Security (RLS), dilengkapi *pull-to-refresh* dan *optimistic UI*.
+- **Pemantauan Rute & Pengiriman**: Estimasi waktu dan jarak tempuh armada logistik secara interaktif.
 
 ---
 
@@ -82,9 +54,9 @@ Pindai kode QR menggunakan aplikasi **Expo Go** pada perangkat Android atau iOS 
 
 ---
 
-## 🧪 Skenario Pengujian Multi-Akun (Verifikasi Isolasi RLS)
+## 🧪 Skenario Pengujian Multi-Akun (Verifikasi Isolasi Data)
 
-Untuk membuktikan bahwa Keamanan Tingkat Baris (RLS) bekerja 100%:
+Untuk memastikan isolasi data antar pengguna berjalan dengan benar:
 
 1. **Uji Akun Pertama (User A):**
    - Buka aplikasi, daftar akun baru (misal: `driver1@trukkita.com`).
